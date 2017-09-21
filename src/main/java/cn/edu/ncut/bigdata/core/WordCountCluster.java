@@ -19,12 +19,23 @@ public class WordCountCluster {
 
     public static void main(String[] args) {
 
+        // 如果要在spark集群上运行，需要修改的，只有两个地方
+        // 第一，将SparkConf的setMaster()方法给删掉，默认它自己会去连接
+        // 第二，我们针对的不是本地文件了，修改为hadoop hdfs上的真正的存储大数据的文件
+
+        // 实际执行步骤：
+        // 1、将spark.txt文件上传到hdfs上去   hadoop fs -put spark.txt /spark.txt
+        // 2、使用我们最早在pom.xml里配置的maven插件，对spark工程进行打包
+        // 3、将打包后的spark工程jar包，上传到机器上执行
+        // 4、编写spark-submit脚本
+        // 5、执行spark-submit脚本，提交spark应用到集群执行
+
         SparkConf sparkConf = new SparkConf().
                 setAppName("WordCountCluster");
         //.setMaster("spark://spark01:7070");
 
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
-
+        //注意修改hdfs文件地址，协议为hdfs而不是http
         JavaRDD<String> lines = sparkContext.textFile("hdfs://spark01:9000/spark.txt");
 
         JavaRDD<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
@@ -41,7 +52,6 @@ public class WordCountCluster {
                 return new Tuple2(word, 1);
             }
         });
-
 
         JavaPairRDD<String,Integer> wordCounts = pairRDD.reduceByKey(new Function2<Integer, Integer, Integer>() {
             @Override
