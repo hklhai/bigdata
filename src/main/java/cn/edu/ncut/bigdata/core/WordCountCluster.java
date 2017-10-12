@@ -30,9 +30,9 @@ public class WordCountCluster {
         // 4、编写spark-submit脚本
         // 5、执行spark-submit脚本，提交spark应用到集群执行
 
-        SparkConf sparkConf = new SparkConf().
-                setAppName("WordCountCluster");
-        //.setMaster("spark://spark01:7070");
+        SparkConf sparkConf = new SparkConf()
+                .setAppName("WordCountCluster")
+                .setMaster("spark://spark01:7077");
 
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         //注意修改hdfs文件地址，协议为hdfs而不是http
@@ -53,16 +53,16 @@ public class WordCountCluster {
             }
         });
 
-        JavaPairRDD<String,Integer> wordCounts = pairRDD.reduceByKey(new Function2<Integer, Integer, Integer>() {
+        JavaPairRDD<String, Integer> wordCounts = pairRDD.reduceByKey(new Function2<Integer, Integer, Integer>() {
             @Override
             public Integer call(Integer v1, Integer v2) throws Exception {
-                return v1+v2;
+                return v1 + v2;
             }
         });
         wordCounts.foreach(new VoidFunction<Tuple2<String, Integer>>() {
             @Override
             public void call(Tuple2<String, Integer> wordcount) throws Exception {
-                System.out.println(wordcount._1+":"+wordcount._2);
+                System.out.println(wordcount._1 + ":" + wordcount._2);
             }
         });
 
