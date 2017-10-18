@@ -39,7 +39,7 @@ public class TransformationOperation {
     }
 
     private static void cogroup() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("TransformationOperationJoin");
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("cogroup");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         // 模拟集合
@@ -69,7 +69,7 @@ public class TransformationOperation {
     }
 
     private static void join() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("TransformationOperationJoin");
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("join");
         JavaSparkContext sc = new JavaSparkContext(conf);
         List<Tuple2<Integer, String>> studentList = Arrays.asList(
                 new Tuple2<>(1, "hk"),
@@ -98,7 +98,7 @@ public class TransformationOperation {
     }
 
     private static void sortByKey() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("TransformationOperationSortByKey");
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("sortByKey");
         JavaSparkContext sc = new JavaSparkContext(conf);
         List<Tuple2<Integer, String>> list = Arrays.asList(
                 new Tuple2<>(65, "lee"),
@@ -118,7 +118,7 @@ public class TransformationOperation {
     }
 
     private static void flatMap() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("TransformationOperationFlatMap");
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("flatMap");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         List<String> list = Arrays.asList("hello you", "hello me", "hello world");
@@ -141,7 +141,7 @@ public class TransformationOperation {
 
 
     private static void map() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("TransformationOperationMap");
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("map");
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
 
         List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
@@ -166,7 +166,7 @@ public class TransformationOperation {
 
 
     private static void filter() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("TransformationOperationFilter");
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("filter");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -193,7 +193,7 @@ public class TransformationOperation {
     }
 
     private static void groupByKey() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("TransformationOperationGroupByKey");
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("groupByKey");
         JavaSparkContext sc = new JavaSparkContext(conf);
         List<Tuple2<String, Integer>> classData = Arrays.asList(
                 new Tuple2<>("class1", 80),
@@ -223,7 +223,7 @@ public class TransformationOperation {
 
 
     private static void reduceByKey() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("TransformationOperationReduceByKey");
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("reduceByKey");
         JavaSparkContext sc = new JavaSparkContext(conf);
         List<Tuple2<String, Integer>> classData = Arrays.asList(
                 new Tuple2<>("class1", 80),
