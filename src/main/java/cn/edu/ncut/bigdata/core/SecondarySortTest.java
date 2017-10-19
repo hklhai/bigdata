@@ -18,7 +18,7 @@ public class SecondarySortTest {
 
         JavaSparkContext sc = new JavaSparkContext(
                 new SparkConf().setAppName("SecondarySortKey").setMaster("local"));
-        JavaRDD<String> numberRDD = sc.textFile("D://sort.txt");
+        JavaRDD<String> numberRDD = sc.textFile("D://spark//sort.txt");
 
         JavaPairRDD<SecondarySortKey, String> pairRDD = numberRDD.mapToPair(new PairFunction<String, SecondarySortKey, String>() {
             @Override

@@ -21,7 +21,7 @@ public class SortWordCount {
         JavaSparkContext sc = new JavaSparkContext(
                 new SparkConf().setMaster("local").setAppName("SortWordCount"));
 
-        JavaRDD<String> lines = sc.textFile("D://spark.txt");
+        JavaRDD<String> lines = sc.textFile("D://spark//spark.txt");
         JavaRDD<String> mapRDD = lines.flatMap(new FlatMapFunction<String, String>() {
             @Override
             public Iterable<String> call(String s) throws Exception {

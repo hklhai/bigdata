@@ -15,7 +15,7 @@ public class LocalFile {
         SparkConf sparkConf = new SparkConf().setAppName("LocalFile").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
-        JavaRDD<String> lines = sc.textFile("D://spark.txt");
+        JavaRDD<String> lines = sc.textFile("D://spark//spark.txt");
 
         JavaRDD<Integer> lineRDD = lines.map(new Function<String, Integer>() {
 

@@ -17,7 +17,7 @@ public class PersistRDD {
         // 如果你先创建一个RDD，然后单独另起一行执行cache()或persist()方法，是没有用的
         // 而且，会报错，大量的文件会丢失
 
-        JavaRDD<String> lineRDD = sc.textFile("D://bigspark.txt").cache();
+        JavaRDD<String> lineRDD = sc.textFile("D://spark//bigspark.txt").cache();
         long begin = System.currentTimeMillis();
         long count = lineRDD.count();
         long end = System.currentTimeMillis();

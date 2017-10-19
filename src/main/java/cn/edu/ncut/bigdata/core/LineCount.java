@@ -18,7 +18,7 @@ public class LineCount {
         SparkConf conf = new SparkConf().setAppName("LineCount").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaRDD<String> lineRDD = sc.textFile("D://hello.txt");
+        JavaRDD<String> lineRDD = sc.textFile("D://spark//hello.txt");
         JavaPairRDD<String, Integer> javaPairRDD = lineRDD.mapToPair(new PairFunction<String, String, Integer>() {
 
             @Override
