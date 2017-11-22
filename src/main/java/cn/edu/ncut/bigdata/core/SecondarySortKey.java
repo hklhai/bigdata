@@ -1,14 +1,7 @@
 package cn.edu.ncut.bigdata.core;
 
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.util.TimeStampedHashSet;
 import scala.Serializable;
 import scala.math.Ordered;
-import scala.tools.scalap.scalax.rules.OrElse;
-
-import javax.xml.bind.Element;
 
 /**
  * Created by Ocean lin on 2017/10/18.
