@@ -7,7 +7,6 @@ import org.apache.spark.sql.SQLContext;
 
 /**
  * 使用Json文件创建DataFrame
- * <p>
  * Created by Ocean lin on 2017/11/22.
  */
 public class CreateDataFrame {

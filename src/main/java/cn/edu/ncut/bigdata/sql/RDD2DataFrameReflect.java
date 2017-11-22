@@ -65,9 +65,5 @@ public class RDD2DataFrameReflect {
         });
 
         System.out.println("======================dataframe end===================");
-
-
     }
-
-
 }

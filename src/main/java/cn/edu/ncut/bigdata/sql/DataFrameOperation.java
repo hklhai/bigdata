@@ -33,7 +33,6 @@ public class DataFrameOperation {
 
         // 分组聚合
         dataFrame.groupBy(dataFrame.col("age")).count().show();
-
     }
 
 }
