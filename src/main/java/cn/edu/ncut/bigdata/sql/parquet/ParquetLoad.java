@@ -1,4 +1,4 @@
-package cn.edu.ncut.bigdata.sql.load;
+package cn.edu.ncut.bigdata.sql.parquet;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -10,6 +10,7 @@ import org.apache.spark.sql.SQLContext;
 import java.util.List;
 
 /**
+ * 使用编程方式加载parquet数据
  * Created by Ocean lin on 2017/11/23.
  */
 public class ParquetLoad {
@@ -20,11 +21,12 @@ public class ParquetLoad {
         SQLContext sqlContext = new SQLContext(sc);
         DataFrame df = sqlContext.read().parquet("hdfs://spark01:9000/sql-load/users.parquet");
         df.registerTempTable("users");
-        DataFrame usersDF = sqlContext.sql("select * from users");
+        // 查询name列
+        DataFrame nameDF = sqlContext.sql("select name from users");
         System.out.println("===============usersDF===================");
-        usersDF.show();
+        nameDF.show();
         System.out.println("===============show===================");
-        List<String> userNameList = usersDF.javaRDD().map(new Function<Row, String>() {
+        List<String> userNameList = nameDF.javaRDD().map(new Function<Row, String>() {
             @Override
             public String call(Row row) throws Exception {
                 return row.getString(0);
