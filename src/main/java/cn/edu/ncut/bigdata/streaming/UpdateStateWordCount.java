@@ -21,7 +21,6 @@ import java.util.List;
 public class UpdateStateWordCount {
 
     public static void main(String[] args) {
-        final String zk = "spark01:2181,spark02:2181,spark03:2181";
 
         SparkConf conf = new SparkConf().setAppName("UpdateStateWordCount").setMaster("local[2]");
         JavaStreamingContext jsc = new JavaStreamingContext(conf, Durations.seconds(6));
