@@ -47,7 +47,7 @@ public class WordCountLocal {
         //SparkContext中，用于根据本地文件类型的输入源创建RDD的方法，叫做textFile()方法
         //Java中，创建的普通RDD，都叫做JavaRDD
         //在这里,RDD中，有元素这种概念，如果是HDFS或者本地文件，创建的RDD中，每个元素就相当于文件里的一行
-        JavaRDD<String> lines = sparkContext.textFile("C://Users//lenovo//Desktop//spark.txt");
+        JavaRDD<String> lines = sparkContext.textFile("D://spark//spark.txt");
 
         //第四步：对初始RDD进行Transformation操作，也就是一些计算操作
         //通常操作会通过创建function，并配合RDD的map、flatMap等算子来执行
