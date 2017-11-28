@@ -19,6 +19,7 @@ import java.util.List;
 /**
  * Created by Ocean lin on 2017/11/27.
  */
+// TODO: 2017/11/28 输出为字符串的位置，而不是字符串的值 
 public class TransformBlackList {
     public static void main(String[] args) {
         SparkConf conf = new SparkConf().setAppName("TransformBlackList").setMaster("local[2]");
@@ -78,12 +79,10 @@ public class TransformBlackList {
             }
         });
 
-
         // 打印有效的广告点击日志
         // 其实在真实企业场景中，这里后面就可以走写入kafka、ActiveMQ等这种中间件消息队列
         // 然后再开发一个专门的后台服务，作为广告计费服务，执行实时的广告计费，这里就是只拿到了有效的广告点击
         validateRDD.print();
-
 
         jsc.start();
         jsc.awaitTermination();
