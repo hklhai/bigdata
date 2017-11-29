@@ -35,7 +35,9 @@ public class HiveDataSource {
 
         // 第二个功能，执行sql还可以返回DataFrame，用于查询
         // 执行sql查询，关联两张表，查询成绩大于80分的学生
-        DataFrame stu80DF = hiveContext.sql("select si.name,si.age,ss.score  from student_infos si , student_scores ss where si.name = ss.name and ss.score > 80 ");
+        DataFrame stu80DF = hiveContext.sql("select si.name,si.age,ss.score  " +
+                "from student_infos si , student_scores ss" +
+                " where si.name = ss.name and ss.score > 80 ");
 
         // 第三个功能，可以将DataFrame中的数据，理论上来说，DataFrame对应的RDD的元素，是Row即可
         // 将DataFrame中的数据保存到hive表中
