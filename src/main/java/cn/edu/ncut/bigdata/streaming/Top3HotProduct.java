@@ -14,6 +14,7 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.streaming.Durations;
+import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import scala.Tuple2;
@@ -24,7 +25,6 @@ import java.util.List;
 /**
  * Created by Ocean lin on 2017/11/28.
  */
-// TODO: 2017/11/28  测试有问题 
 public class Top3HotProduct {
 
     public static void main(String[] args) {
@@ -36,11 +36,11 @@ public class Top3HotProduct {
         JavaReceiverInputDStream<String> product = jsc.socketTextStream("localhost", 9999);
 
         // 转换成mobile_phone-iphone 1
-        product.mapToPair(new PairFunction<String, String, Integer>() {
+        JavaPairDStream<String, Integer> windowRDD = product.mapToPair(new PairFunction<String, String, Integer>() {
             @Override
             public Tuple2<String, Integer> call(String s) throws Exception {
-                String[] split = " ".split(s);
-                return new Tuple2<>(split[2] + "-" + split[1], 1);
+                String[] split = s.split(" ");
+                return new Tuple2<>(split[2] + "_" + split[1], 1);
             }
         }).reduceByKeyAndWindow(new Function2<Integer, Integer, Integer>() {
             // 然后针对60秒内的每个种类的每个商品的点击次数
@@ -49,7 +49,9 @@ public class Top3HotProduct {
             public Integer call(Integer integer, Integer integer2) throws Exception {
                 return integer + integer2;
             }
-        }, Durations.seconds(60), Durations.seconds(10)).foreachRDD(new Function<JavaPairRDD<String, Integer>, Void>() {
+        }, Durations.seconds(60), Durations.seconds(10));
+
+        windowRDD.foreachRDD(new Function<JavaPairRDD<String, Integer>, Void>() {
             // catagoryProductCountRDD每个窗口的统计RDD
             @Override
             public Void call(JavaPairRDD<String, Integer> catagoryProductCountRDD) throws Exception {
@@ -57,10 +59,10 @@ public class Top3HotProduct {
                 JavaRDD<Row> rowJavaRDD = catagoryProductCountRDD.map(new Function<Tuple2<String, Integer>, Row>() {
                     @Override
                     public Row call(Tuple2<String, Integer> tuple) throws Exception {
-                        String category = tuple._1.split("-")[0];
-                        String product = tuple._1.split(" ")[1];
-                        Integer count = tuple._2;
-                        return RowFactory.create(category, product, count);
+                        String category = tuple._1.split("_")[0];
+                        String product = tuple._1.split("_")[1];
+                        Integer productcount = tuple._2;
+                        return RowFactory.create(category, product, productcount);
                     }
                 });
 
@@ -68,22 +70,21 @@ public class Top3HotProduct {
                 List<StructField> structFieldList = new ArrayList<>();
                 structFieldList.add(DataTypes.createStructField("category", DataTypes.StringType, true));
                 structFieldList.add(DataTypes.createStructField("product", DataTypes.StringType, true));
-                structFieldList.add(DataTypes.createStructField("count", DataTypes.IntegerType, true));
+                structFieldList.add(DataTypes.createStructField("productcount", DataTypes.IntegerType, true));
                 StructType st = DataTypes.createStructType(structFieldList);
 
                 HiveContext hiveContext = new HiveContext(catagoryProductCountRDD.context());
                 DataFrame dataFrame = hiveContext.createDataFrame(rowJavaRDD, st);
                 dataFrame.registerTempTable("products");
                 // 使用开窗函数
-                DataFrame top3DF = hiveContext.sql("select category,product,count from (" +
-                        "select category,product,count," +
-                        "ROW_NUMBER() OVER (PARTITION BY category order by count desc ) rank from products) tmp" +
-                        " where rank >=3");
+                DataFrame top3DF = hiveContext.sql("select category,product,productcount from (" +
+                        "select category,product,productcount," +
+                        "ROW_NUMBER() OVER (PARTITION BY category order by productcount desc ) rank from products) tmp" +
+                        " where rank <=3");
                 top3DF.show();
                 return null;
             }
         });
-
 
         jsc.start();
         jsc.awaitTermination();
