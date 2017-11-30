@@ -93,7 +93,5 @@ public class WindowHotWord {
         jsc.start();
         jsc.awaitTermination();
         jsc.close();
-
     }
-
 }
