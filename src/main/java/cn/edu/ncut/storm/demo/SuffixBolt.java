@@ -1,29 +1,33 @@
 package cn.edu.ncut.storm.demo;
 
-import backtype.storm.task.OutputCollector;
-import backtype.storm.task.TopologyContext;
+import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.topology.base.BaseRichBolt;
+import backtype.storm.topology.base.BaseBasicBolt;
+import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
-
-import java.util.Map;
+import backtype.storm.tuple.Values;
 
 /**
+ * 将原始商品名转换成大写再发送出去
+ * <p>
  * Created by Ocean lin on 2017/12/2.
  */
-public class SuffixBolt extends BaseRichBolt{
-    @Override
-    public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
+public class SuffixBolt extends BaseBasicBolt {
 
-    }
-
+    // 每收到一个消息都会执行一次
     @Override
-    public void execute(Tuple tuple) {
+    public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
+        // 从tuple中获取原始商品名
+        String good_name = tuple.getString(0);
+        String upperCase = good_name.toUpperCase();
+
+        // 发送出去
+        basicOutputCollector.emit(new Values(upperCase));
 
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-
+        outputFieldsDeclarer.declare(new Fields("upper_good_name"));
     }
 }
