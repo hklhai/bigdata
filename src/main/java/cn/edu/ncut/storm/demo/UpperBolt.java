@@ -1,53 +1,33 @@
 package cn.edu.ncut.storm.demo;
 
-import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
+import backtype.storm.tuple.Values;
 
 /**
- * 添加后缀，写入文件中
+ * 将原始商品名转换成大写再发送出去
+ * <p>
  * Created by Ocean lin on 2017/12/2.
  */
 public class UpperBolt extends BaseBasicBolt {
 
-    FileWriter fileWriter = null;
-
-    @Override
-    public void prepare(Map stormConf, TopologyContext context) {
-        super.prepare(stormConf, context);
-        try {
-            this.fileWriter = new FileWriter("/home/root" + UUID.randomUUID());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
+    // 每收到一个消息都会执行一次
     @Override
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
-        String upper_good_name = tuple.getString(0);
-        String final_good_name = upper_good_name + "-Storm Goods";
+        // 从tuple中获取原始商品名
+        String good_name = tuple.getString(0);
+        String upperCase = good_name.toUpperCase();
 
-        try {
-            fileWriter.append(final_good_name);
-            fileWriter.append("\n");
-            fileWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // 发送出去
+        basicOutputCollector.emit(new Values(upperCase));
 
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("final_good_name"));
+        outputFieldsDeclarer.declare(new Fields("upper_good_name"));
     }
 }
