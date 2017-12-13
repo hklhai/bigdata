@@ -11,6 +11,7 @@ import org.apache.spark.api.java.function.VoidFunction;
 import scala.Tuple2;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Ocean lin on 2017/9/21.
@@ -32,11 +33,11 @@ public class WordCountCluster {
 
         SparkConf sparkConf = new SparkConf()
                 .setAppName("WordCountCluster")
-                .setMaster("spark://spark01:7077");
+                .setMaster("spark://192.168.89.129:7077");
 
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         //注意修改hdfs文件地址，协议为hdfs而不是http
-        JavaRDD<String> lines = sparkContext.textFile("hdfs://spark01:9000/spark.txt");
+        JavaRDD<String> lines = sparkContext.textFile("hdfs://192.168.89.129:9000/hello.txt");
 
         JavaRDD<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
             @Override
@@ -59,12 +60,17 @@ public class WordCountCluster {
                 return v1 + v2;
             }
         });
-        wordCounts.foreach(new VoidFunction<Tuple2<String, Integer>>() {
-            @Override
-            public void call(Tuple2<String, Integer> wordcount) throws Exception {
-                System.out.println(wordcount._1 + ":" + wordcount._2);
-            }
-        });
+        List<Tuple2<String, Integer>> wordCountList = wordCounts.collect();
+        for(Tuple2<String, Integer> wordCount : wordCountList)
+        {
+            System.out.println(wordCount);
+        }
+//        wordCounts.foreach(new VoidFunction<Tuple2<String, Integer>>() {
+//            @Override
+//            public void call(Tuple2<String, Integer> wordcount) throws Exception {
+//                System.out.println(wordcount._1 + ":" + wordcount._2);
+//            }
+//        });
 
         sparkContext.close();
 
