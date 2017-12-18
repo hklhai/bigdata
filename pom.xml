@@ -94,6 +94,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--flume-->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-flume_2.10</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
