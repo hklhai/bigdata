@@ -1,4 +1,4 @@
-package cn.edu.ncut.bigdata.advance.streaming;
+package cn.edu.ncut.bigdata.advance.streaming.flume;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.FlatMapFunction;
@@ -15,21 +15,22 @@ import scala.Tuple2;
 import java.util.Arrays;
 
 /**
- * 基于Flume push方式的实时wordcount程序
+ * 基于Flume poll方式的实时wordcount程序
  * Created by Ocean lin on 2017/12/18.
  */
-public class FlumePushWordCount {
+public class FlumeSinkPollWordCount {
 
     public static void main(String[] args) {
 
         String kafka = "spark02:9092,spark03:9092";
-        SparkConf conf = new SparkConf().setAppName("FlumePushWordCount").setMaster("local[2]");
+        SparkConf conf = new SparkConf().setAppName("FlumeSinkPollWordCount").setMaster("local[2]");
 
         JavaStreamingContext jsc = new JavaStreamingContext(conf, Durations.seconds(6));
 
         // 在指定机器的指定端口上监听数据
+        // 与push区别就是又createStream转换成createPollingStream
         JavaReceiverInputDStream<SparkFlumeEvent> flumeStream =
-                FlumeUtils.createStream(jsc, "192.168.89.129", 8888);
+                FlumeUtils.createPollingStream(jsc, "192.168.89.129", 8888);
 
 
         JavaPairDStream<String, Integer> wordCountRDD = flumeStream.flatMap(new FlatMapFunction<SparkFlumeEvent, String>() {

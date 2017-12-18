@@ -94,14 +94,31 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--flume-->
+        <!--flume push-->
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming-flume_2.10</artifactId>
             <version>${spark.version}</version>
         </dependency>
 
+        <!--flume sink-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.spark</groupId>-->
+            <!--<artifactId>spark-streaming-flume-sink_2.10</artifactId>-->
+            <!--<version>${spark.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.commons</groupId>-->
+            <!--<artifactId>commons-lang3</artifactId>-->
+            <!--<version>3.3.2</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.scala-lang</groupId>-->
+            <!--<artifactId>scala-library</artifactId>-->
+            <!--<version>2.10.4</version>-->
+        <!--</dependency>-->
     </dependencies>
+
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
