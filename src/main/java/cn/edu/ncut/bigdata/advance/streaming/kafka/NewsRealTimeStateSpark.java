@@ -64,18 +64,22 @@ public class NewsRealTimeStateSpark {
         });
 
         // 统计第一个指标：每10秒内的各个页面的pv
-        // pv(viewRDD);
+        pv(viewRDD);
 
         // 统计第二个指标：每10秒内的各个页面的uv
-        // uv(lines);
+        uv(lines);
 
 
         // 统计第三个指标：实时注册用户数
-        // realTimeRegisterUserNum(lines);
+        realTimeRegisterUserNum(lines);
 
 
         // 统计第四个指标：实时用户跳出数
         calculateUserJumpCount(viewRDD);
+
+        // 统计第五个指标：实时版块pv
+        calcualteSectionPv(viewRDD);
+
 
         jsc.start();
         jsc.awaitTermination();
@@ -167,12 +171,11 @@ public class NewsRealTimeStateSpark {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    public Tuple2<Long, Long> call(Tuple2<String, String> tuple)
-                            throws Exception {
+                    public Tuple2<Long, Long> call(Tuple2<String, String> tuple) throws Exception {
                         String log = tuple._2;
                         String[] logSplited = log.split(" ");
                         Long userid = Long.valueOf("null".equalsIgnoreCase(logSplited[2]) ? "-1" : logSplited[2]);
-                        return new Tuple2<Long, Long>(userid, 1L);
+                        return new Tuple2<>(userid, 1L);
                     }
 
                 });
@@ -209,5 +212,42 @@ public class NewsRealTimeStateSpark {
 
         JavaDStream<Long> jumpUserCountDStream = jumpUserDStream.count();
         jumpUserCountDStream.print();
+    }
+
+    /**
+     * 版块实时pv
+     *
+     * @param accessDStream
+     */
+    private static void calcualteSectionPv(JavaPairDStream<String, String> accessDStream) {
+        JavaPairDStream<String, Long> sectionDStream = accessDStream.mapToPair(
+                new PairFunction<Tuple2<String, String>, String, Long>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Tuple2<String, Long> call(Tuple2<String, String> tuple) throws Exception {
+                        String log = tuple._2;
+                        String[] logSplited = log.split(" ");
+
+                        String section = logSplited[4];
+                        return new Tuple2<>(section, 1L);
+                    }
+
+                });
+
+        JavaPairDStream<String, Long> sectionPvDStream = sectionDStream.reduceByKey(
+
+                new Function2<Long, Long, Long>() {
+
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Long call(Long v1, Long v2) throws Exception {
+                        return v1 + v2;
+                    }
+
+                });
+
+        sectionPvDStream.print();
     }
 }
