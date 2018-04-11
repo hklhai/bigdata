@@ -14,6 +14,8 @@ import java.util.Arrays;
 
 /**
  * Created by Ocean lin on 2017/12/18.
+ *
+ * @author Lin
  */
 public class CustomReceiverWordCount {
 

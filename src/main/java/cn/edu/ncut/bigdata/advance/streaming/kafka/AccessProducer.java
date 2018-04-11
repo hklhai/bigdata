@@ -12,9 +12,10 @@ import java.util.Random;
 
 /**
  * Created by Ocean lin on 2017/12/18.
+ *
+ * @author Lin
  */
 public class AccessProducer extends Thread {
-
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     private static Random random = new Random();
@@ -38,6 +39,7 @@ public class AccessProducer extends Thread {
         return new ProducerConfig(props);
     }
 
+    @Override
     public void run() {
         int counter = 0;
 
@@ -70,7 +72,7 @@ public class AccessProducer extends Thread {
         StringBuffer buffer = new StringBuffer("");
 
         // 生成时间戳
-        long timestamp = new Date().getTime();
+        long timestamp = System.currentTimeMillis();
 
         // 生成随机userid（默认1000注册用户，每天1/10的访客是未注册用户）
         Long userid = 0L;
@@ -103,7 +105,8 @@ public class AccessProducer extends Thread {
         StringBuffer buffer = new StringBuffer("");
 
         // 生成时间戳
-        long timestamp = new Date().getTime();
+        long timestamp = System.currentTimeMillis();
+
 
         // 新用户都是userid为null
         Long userid = null;

@@ -10,6 +10,8 @@ import java.net.Socket;
 
 /**
  * Created by Ocean lin on 2017/12/18.
+ *
+ * @author Lin
  */
 public class JavaCustomReceiver extends Receiver {
     String host = null;

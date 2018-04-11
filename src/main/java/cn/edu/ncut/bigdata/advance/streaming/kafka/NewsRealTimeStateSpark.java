@@ -21,16 +21,19 @@ import java.util.Set;
 
 /**
  * 新闻网站关键指标实时统计
+ * <p>
  * Created by Ocean lin on 2017/12/18.
+ *
+ * @author Lin
  */
 public class NewsRealTimeStateSpark {
     public static void main(String[] args) throws Exception {
-        String kafka = "spark02:9092,spark03:9092";
+        String kafka = "192.168.89.129:9092,192.168.89.130:9092";
         SparkConf conf = new SparkConf().setAppName("NewsRealTimeStateSpark").setMaster("local[2]");
 
         JavaStreamingContext jsc = new JavaStreamingContext(conf, Durations.seconds(10));
         // 设置参数，不基于zookeeper
-        Map<String, String> kafkaParam = new HashMap<>();
+        Map<String, String> kafkaParam = new HashMap<>(5);
         kafkaParam.put("metadata.broker.list", kafka);
 
         // 然后，要创建一个set，里面放入，你要读取的topic
@@ -68,8 +71,11 @@ public class NewsRealTimeStateSpark {
 
 
         // 统计第三个指标：实时注册用户数
-        realTimeRegisterUserNum(lines);
+        // realTimeRegisterUserNum(lines);
 
+
+        // 统计第四个指标：实时用户跳出数
+        calculateUserJumpCount(viewRDD);
 
         jsc.start();
         jsc.awaitTermination();
@@ -81,14 +87,13 @@ public class NewsRealTimeStateSpark {
             @Override
             public Boolean call(Tuple2<String, String> v1) throws Exception {
                 String[] split = v1._2.split(" ");
-
                 if ("register".equals(split[5])) {
                     return true;
+                } else {
+                    return false;
                 }
-                return false;
             }
         });
-
         registerDStream.count().print();
     }
 
@@ -114,7 +119,7 @@ public class NewsRealTimeStateSpark {
             @Override
             public Tuple2<Long, Long> call(String s) throws Exception {
                 String[] split = s.split("_");
-                return new Tuple2<>(Long.valueOf(split[1]), 1l);
+                return new Tuple2<>(Long.valueOf(split[1]), 1L);
             }
         });
 
@@ -133,7 +138,7 @@ public class NewsRealTimeStateSpark {
             public Tuple2<Long, Long> call(Tuple2<String, String> tuple2) throws Exception {
                 String[] split = tuple2._2.split(" ");
 
-                return new Tuple2<>(Long.valueOf(split[3]), 1l);
+                return new Tuple2<>(Long.valueOf(split[3]), 1L);
             }
         });
 
@@ -147,5 +152,62 @@ public class NewsRealTimeStateSpark {
         pagePvDStream.print();
         // 在计算出每10秒钟的页面pv之后，企业级项目中，应该持久化到mysql，或redis中，对每个页面的pv进行累加
         // JAVAEE系统，就可以从mysql或redis中，读取page pv实时变化的数据，以及曲线图
+    }
+
+    /**
+     * 计算用户跳出数量
+     *
+     * @param accessDStream
+     */
+    private static void calculateUserJumpCount(JavaPairDStream<String, String> accessDStream) {
+        JavaPairDStream<Long, Long> useridDStream = accessDStream.mapToPair(
+
+                new PairFunction<Tuple2<String, String>, Long, Long>() {
+
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Tuple2<Long, Long> call(Tuple2<String, String> tuple)
+                            throws Exception {
+                        String log = tuple._2;
+                        String[] logSplited = log.split(" ");
+                        Long userid = Long.valueOf("null".equalsIgnoreCase(logSplited[2]) ? "-1" : logSplited[2]);
+                        return new Tuple2<Long, Long>(userid, 1L);
+                    }
+
+                });
+
+        JavaPairDStream<Long, Long> useridCountDStream = useridDStream.reduceByKey(
+
+                new Function2<Long, Long, Long>() {
+
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Long call(Long v1, Long v2) throws Exception {
+                        return v1 + v2;
+                    }
+
+                });
+
+        JavaPairDStream<Long, Long> jumpUserDStream = useridCountDStream.filter(
+
+                new Function<Tuple2<Long, Long>, Boolean>() {
+
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Boolean call(Tuple2<Long, Long> tuple) throws Exception {
+                        if (tuple._2 == 1) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                });
+
+        JavaDStream<Long> jumpUserCountDStream = jumpUserDStream.count();
+        jumpUserCountDStream.print();
     }
 }

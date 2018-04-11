@@ -73,10 +73,11 @@ public class JDBCDataSource {
         }).filter(new Function<Row, Boolean>() {
             @Override
             public Boolean call(Row row) throws Exception {
-                if (row.getInt(2) > 80)
+                if (row.getInt(2) > 80) {
                     return true;
-                else
+                } else {
                     return false;
+                }
             }
         });
 
@@ -90,8 +91,9 @@ public class JDBCDataSource {
         DataFrame goodStuDF = sqlContext.createDataFrame(goodStuRDD, structType);
 
         // 输出DataFrame数据
-        for (Row row : goodStuDF.collect())
+        for (Row row : goodStuDF.collect()) {
             System.out.println(row);
+        }
 
 
         // 将DataFrame中的数据保存到mysql表中
@@ -116,10 +118,12 @@ public class JDBCDataSource {
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    if (connection != null)
+                    if (connection != null) {
                         connection.close();
-                    if (statement != null)
+                    }
+                    if (statement != null) {
                         statement.close();
+                    }
                 }
             }
         });

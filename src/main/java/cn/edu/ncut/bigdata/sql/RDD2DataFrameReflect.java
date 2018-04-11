@@ -13,6 +13,8 @@ import org.apache.spark.sql.SQLContext;
  * 使用反射的方式将RDD转化为DataFrame
  * <p>
  * Created by Ocean lin on 2017/11/22.
+ *
+ * @author Lin
  */
 public class RDD2DataFrameReflect {
 
